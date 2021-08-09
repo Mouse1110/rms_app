@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rms_app/src/model/global/page/hr.dart';
+import 'package:flutter_rms_app/src/model/global/page/interview.dart';
 import 'package:flutter_rms_app/src/view/interview/component/add.dart';
 import 'package:flutter_rms_app/src/view/interview/component/detail.dart';
 import 'package:flutter_rms_app/src/view/interview/component/list.dart';
@@ -20,7 +21,7 @@ class _InterViewPageState extends State<InterViewPage> {
   ];
 
   @override
-  Widget build(BuildContext context) => Consumer<HRModel>(
+  Widget build(BuildContext context) => Consumer<InterViewModel>(
         builder: (context, value, child) {
           return listPage[value.init];
         },

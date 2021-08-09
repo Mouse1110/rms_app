@@ -5,6 +5,7 @@ import 'package:flutter_rms_app/src/model/global/page/marketing.dart';
 import 'package:flutter_rms_app/src/utils/config/color.dart';
 import 'package:flutter_rms_app/src/utils/config/fontsize.dart';
 import 'package:flutter_rms_app/src/utils/config/shadow.dart';
+import 'package:flutter_rms_app/src/utils/urllauncher/index.dart';
 import 'package:flutter_rms_app/src/view/component/buttonadd.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -310,7 +311,9 @@ class _MarketingListState extends State<MarketingList> {
             ),
             Expanded(
                 child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                URLLauncher.openLink(url: data.minhChung);
+              },
               child: Container(
                 height: 120,
                 padding: const EdgeInsets.all(paddingVer),
@@ -348,43 +351,50 @@ class _MarketingListState extends State<MarketingList> {
 
   Widget list(BuildContext context) =>
       Consumer<MarketingModel>(builder: (context, value, index) {
-        return Expanded(
-          child: ListView.builder(
-            itemCount: value.listMarketingFolowMonth.length,
-            itemBuilder: (context, index) => Column(
-              children: [
-                const SizedBox(
-                  height: paddingHor,
-                ),
-                itemList(value.listMarketingFolowMonth[index]),
-              ],
+        return Column(
+          children: [
+            Column(
+              children: value.listMarketingFolowMonth
+                  .map((e) => Column(
+                        children: [
+                          const SizedBox(
+                            height: paddingHor,
+                          ),
+                          itemList(e),
+                        ],
+                      ))
+                  .toList(),
             ),
-          ),
+            const SizedBox(
+              height: paddingHor * 3,
+            ),
+          ],
         );
       });
 //============================================================================
-  Widget scaffold(BuildContext context) => Column(
-        children: [
-          const SizedBox(
-            height: paddingVer,
-          ),
-          title(context),
-          const SizedBox(
-            height: paddingVer,
-          ),
-          showContainer(context),
-          const SizedBox(
-            height: paddingVer,
-          ),
-          buttonAndShowDate(),
-          const SizedBox(height: paddingVer),
-          list(context),
-        ],
+  Widget scaffold(BuildContext context) => SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: paddingVer,
+            ),
+            title(context),
+            const SizedBox(
+              height: paddingVer,
+            ),
+            showContainer(context),
+            const SizedBox(
+              height: paddingVer,
+            ),
+            buttonAndShowDate(),
+            const SizedBox(height: paddingVer),
+            list(context),
+          ],
+        ),
       );
 //============================================================================
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller = MarketingController(context: context);
   }

@@ -103,6 +103,7 @@ class _BUAddState extends State<BUAdd> {
                     tinhTrang: 'none',
                     phoneList: [],
                     candidateLH: [],
+                    candidateDN: [],
                     soLuocYeuCau: _soLuocController.text);
 
                 loading.loading = _controller.postData(data);

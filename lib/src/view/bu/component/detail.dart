@@ -4,16 +4,24 @@ import 'package:flutter_rms_app/src/model/OTD/bu.dart';
 import 'package:flutter_rms_app/src/model/global/page/bu.dart';
 import 'package:flutter_rms_app/src/utils/config/color.dart';
 import 'package:flutter_rms_app/src/utils/config/fontsize.dart';
+import 'package:flutter_rms_app/src/utils/sheetapi/index.dart';
+import 'package:flutter_rms_app/src/utils/urllauncher/index.dart';
 import 'package:flutter_rms_app/src/view/component/buttonadd.dart';
 import 'package:flutter_rms_app/src/view/component/dialog.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:provider/provider.dart';
 
-class BUDetail extends StatelessWidget {
+class BUDetail extends StatefulWidget {
   const BUDetail({
     Key key,
   }) : super(key: key);
+
+  @override
+  State<BUDetail> createState() => _BUDetailState();
+}
+
+class _BUDetailState extends State<BUDetail> {
   Widget itemTitle(String title, String text) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -76,47 +84,42 @@ class BUDetail extends StatelessWidget {
                     const SizedBox(
                       height: paddingHor,
                     ),
-                    const SizedBox(
-                      height: paddingHor,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Hoạt động',
-                            style: GoogleFonts.roboto(
-                              textStyle: const TextStyle(
-                                fontSize: fontText,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            )),
-                        const SizedBox(
-                          height: paddingVer,
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (data.tinhTrang == 'in') {
+                                data.tinhTrang = 'out';
+                              } else {
+                                data.tinhTrang = 'in';
+                              }
+                            });
+                            SheetAPI.init('BU').then((value) =>
+                                SheetAPI.update(data.toJson(), data.id));
+                          },
+                          child: Text('Hoạt động',
+                              style: GoogleFonts.roboto(
+                                  fontSize: fontTitle,
+                                  fontWeight: FontWeight.w700)),
                         ),
-                        // LiteRollingSwitch(
-                        //   value: true,
-                        //   textOff: 'Khởi chạy',
-                        //   textOn: 'Đã khởi chạy',
-                        //   textSize: fontMini,
-                        //   colorOff: Colors.redAccent,
-                        //   colorOn: Colors.greenAccent,
-                        //   iconOff: Icons.arrow_right,
-                        //   iconOn: Icons.arrow_left,
-                        //   onChanged: (bool value) {
-                        //     if (value) {
-                        //       data.tinhTrang = 'in';
-                        //     } else {
-                        //       data.tinhTrang = 'out';
-                        //     }
-                        //     dialog.showPopup(
-                        //         context,
-                        //         const Text('Thông báo'),
-                        //         Text(data.tinhTrang == 'in'
-                        //             ? 'Bạn muốn chuyển trạng thái yêu cầu về hoạt động'
-                        //             : 'Bạn muốn tắt hoạt động của yêu cầu này'),
-                        //         () {},
-                        //         () {});
-                        //   },
-                        // ),
+                        Switch(
+                          value: data.tinhTrang == 'in' ? true : false,
+                          onChanged: (value) {
+                            setState(() {
+                              if (value) {
+                                data.tinhTrang = 'in';
+                              } else {
+                                data.tinhTrang = 'out';
+                              }
+                            });
+                            SheetAPI.init('BU').then((value) =>
+                                SheetAPI.update(data.toJson(), data.id));
+                          },
+                          activeTrackColor: colorBackgroundLiner,
+                          activeColor: colorBackgroundMain,
+                        ),
                       ],
                     ),
                   ],
@@ -124,9 +127,10 @@ class BUDetail extends StatelessWidget {
               ),
             ),
             ButtonAdd(
+              icon: Icons.assessment,
+              title: 'Tiêu chí',
               press: () {
-                BUController _controller = BUController(context: context);
-                _controller.moveAddPage();
+                URLLauncher.openLink(url: data.tieuChi);
               },
             )
           ],

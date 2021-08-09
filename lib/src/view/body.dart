@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rms_app/src/controller/bu.dart';
 import 'package:flutter_rms_app/src/controller/hr.dart';
 import 'package:flutter_rms_app/src/controller/interview.dart';
+import 'package:flutter_rms_app/src/controller/loading.dart';
 import 'package:flutter_rms_app/src/model/global/index.dart';
+import 'package:flutter_rms_app/src/model/global/page/account.dart';
 import 'package:flutter_rms_app/src/model/global/page/bu.dart';
 import 'package:flutter_rms_app/src/model/global/page/hr.dart';
 import 'package:flutter_rms_app/src/model/global/page/interview.dart';
 import 'package:flutter_rms_app/src/utils/config/color.dart';
 import 'package:flutter_rms_app/src/utils/config/fontsize.dart';
+import 'package:flutter_rms_app/src/utils/config/images.dart';
 import 'package:flutter_rms_app/src/utils/config/widget.dart';
+import 'package:flutter_rms_app/src/view/splash/index.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -34,10 +38,7 @@ class _HomeViewState extends State<HomeView> {
   InterViewModel interViewModel;
   IndexModel indexModel;
   Widget scaffold(
-    Widget child,
-    int initType,
-    int initPage,
-  ) =>
+          Widget child, int initType, int initPage, BuildContext context) =>
       SafeArea(
         child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -77,7 +78,21 @@ class _HomeViewState extends State<HomeView> {
                                   }
                                 } else if (initPage == 4) {
                                   if (interViewModel.init > 0) {
-                                    _interViewController.moveListPage();
+                                    if (interViewModel.init == 2) {
+                                      LoadingController loading =
+                                          LoadingController(
+                                              context: context,
+                                              loading: _interViewController
+                                                  .getDataBeforMoveListpage());
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => SplashPage(
+                                                    controller: loading,
+                                                  )));
+                                    } else {
+                                      _interViewController.moveListPage();
+                                    }
                                   } else {
                                     indexModel.setInitPage(0);
                                     indexModel.setInitType(0);
@@ -99,7 +114,29 @@ class _HomeViewState extends State<HomeView> {
                                       fontSize: fontTitle)))
                           : const SizedBox(),
                       initType == 0
-                          ? const SizedBox()
+                          ? Consumer<AccountModel>(
+                              builder: (context, value, child) {
+                              return GestureDetector(
+                                onTap: () {
+                                  indexModel.setInitPage(5);
+                                  indexModel.setInitType(3);
+                                },
+                                child: ClipOval(
+                                  child: Image.network(
+                                    '${value.user.photoUrl}',
+                                    fit: BoxFit.fill,
+                                    width: 32,
+                                    height: 32,
+                                    errorBuilder: (context, url, error) =>
+                                        Image.asset(
+                                      iconUser,
+                                      width: 32,
+                                      height: 32,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            })
                           : Consumer<IndexModel>(
                               builder: (context, value, child) => Text(
                                   value.title,
@@ -177,8 +214,8 @@ class _HomeViewState extends State<HomeView> {
     return Consumer<IndexModel>(
       builder: (context, value, child) {
         setHeightAminited(height, value.initType);
-        return scaffold(
-            Config.listPage[value.initPage], value.initType, value.initPage);
+        return scaffold(Config.listPage[value.initPage], value.initType,
+            value.initPage, context);
         // return scaffold(
         //     const InterViewDetail(), value.initType, value.initPage);
       },

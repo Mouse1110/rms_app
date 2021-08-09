@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rms_app/src/controller/loading.dart';
+import 'package:flutter_rms_app/src/controller/login.dart';
 import 'package:flutter_rms_app/src/model/global/index.dart';
 
 import 'package:flutter_rms_app/src/utils/config/color.dart';
@@ -10,16 +11,22 @@ import 'package:flutter_rms_app/src/utils/config/images.dart';
 
 import 'package:flutter_rms_app/src/view/splash/index.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   const Login({Key key}) : super(key: key);
 
-  Widget button(String icon, String title, BuildContext context) =>
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  LoginController _controller;
+  Widget button(
+          String icon, String title, BuildContext context, Function press) =>
       GestureDetector(
-        onTap: () {
-          change(context);
-        },
+        onTap: press,
         child: Container(
           width: 250,
           height: 50,
@@ -118,15 +125,9 @@ class Login extends StatelessWidget {
                                   color: colorBackgroundMain,
                                   fontSize: fontTitleLogin,
                                   fontWeight: FontWeight.w700))),
-                      Column(
-                        children: [
-                          button(iconFace, 'Đăng nhập với facebook', context),
-                          const SizedBox(
-                            height: paddingHor,
-                          ),
-                          button(iconGmail, 'Đăng nhập với Gmail', context)
-                        ],
-                      )
+                      button(iconGmail, 'Đăng nhập với Gmail', context, () {
+                        login(context);
+                      })
                     ],
                   ))
             ],
@@ -134,22 +135,26 @@ class Login extends StatelessWidget {
         ),
       );
 
-  void change(BuildContext context) {
-    LoadingController _controller =
-        LoadingController(context: context, loading: loading(context));
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SplashPage(
-                  controller: _controller,
-                )));
+  void login(BuildContext context) {
+    LoadingController _loadingcontroller;
+    _controller.signIn().then((value) => {
+          _loadingcontroller = LoadingController(
+              context: context, loading: _controller.loading(value)),
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SplashPage(
+                        controller: _loadingcontroller,
+                      )))
+        });
+    ;
   }
 
-  Future loading(BuildContext context) async {
-    Timer(const Duration(seconds: 3), () {
-      Provider.of<IndexModel>(context, listen: false).setInitScreen(1);
-      Navigator.pop(context);
-    });
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = LoginController(context: context);
   }
 
   @override

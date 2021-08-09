@@ -4,6 +4,7 @@ import 'package:flutter_rms_app/src/model/global/page/hr.dart';
 import 'package:flutter_rms_app/src/utils/config/color.dart';
 import 'package:flutter_rms_app/src/utils/config/fontsize.dart';
 import 'package:flutter_rms_app/src/utils/config/images.dart';
+import 'package:flutter_rms_app/src/utils/urllauncher/index.dart';
 import 'package:flutter_rms_app/src/view/component/buttonadd.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -112,11 +113,33 @@ class HRDetail extends StatelessWidget {
                     const SizedBox(
                       width: paddingVer,
                     ),
-                    ClipOval(
-                      child: Image.asset(
-                        iconGmail,
-                        width: 24,
-                        height: 24,
+                    GestureDetector(
+                      onTap: () {
+                        URLLauncher.openLink(
+                            url: value.candidateIndex.facebook);
+                      },
+                      child: ClipOval(
+                        child: Image.asset(
+                          iconFace,
+                          width: 24,
+                          height: 24,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: paddingVer,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        URLLauncher.openEmail(
+                            toEmail: [value.candidateIndex.email]);
+                      },
+                      child: ClipOval(
+                        child: Image.asset(
+                          iconGmail,
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
                     )
                   ],
@@ -139,12 +162,16 @@ class HRDetail extends StatelessWidget {
               bottom: paddingHor,
               left: 0,
               right: 0,
-              child: Center(
-                  child: ButtonAdd(
-                press: () {},
-                title: 'Minh chứng',
-                icon: Icons.assignment,
-              ))),
+              child: Consumer<HRModel>(builder: (context, value, index) {
+                return Center(
+                    child: ButtonAdd(
+                  press: () {
+                    URLLauncher.openLink(url: value.candidateIndex.soYeu);
+                  },
+                  title: 'Sơ yếu',
+                  icon: Icons.assignment,
+                ));
+              })),
         ],
       );
 }

@@ -6,6 +6,7 @@ import 'package:flutter_rms_app/src/view/hr/index.dart';
 import 'package:flutter_rms_app/src/view/interview/index.dart';
 import 'package:flutter_rms_app/src/view/login/index.dart';
 import 'package:flutter_rms_app/src/view/marketing/index.dart';
+import 'package:flutter_rms_app/src/view/user/index.dart';
 
 class Config {
   static List<Widget> listScreen = [
@@ -17,6 +18,7 @@ class Config {
     const BUPage(),
     const MarketingIndex(),
     const HRPage(),
-    const InterViewPage()
+    const InterViewPage(),
+    const UserPage()
   ];
 }

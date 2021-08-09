@@ -24,6 +24,7 @@ class _HRListState extends State<HRList> {
   //=================================================
   Widget itemOld(CandidateOTD data) => GestureDetector(
         onTap: () {
+          model.setCandidateIndex(data);
           _hrController.moveDetailPage();
         },
         child: Container(
@@ -144,24 +145,13 @@ class _HRListState extends State<HRList> {
                   height: paddingHor,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ButtonSave(
                       press: () {
-                        _hrController.postCandidateDaLH(data.phone);
-                        int index = model.listCandidateChuaLH.indexWhere(
-                            (element) => element.phone == data.phone);
-                        if (index > -1) {
-                          model.listCandidateChuaLH.removeAt(index);
-                        }
+                        _hrController.postRemoveCandidateChuaLH(data.phone);
                       },
-                      title: 'thêm vào',
-                    ),
-                    ButtonSave(
-                      press: () {
-                        _hrController.moveDetailPage();
-                      },
-                      title: 'Xem thêm',
+                      title: 'Hủy bỏ',
                     ),
                   ],
                 )
@@ -173,7 +163,7 @@ class _HRListState extends State<HRList> {
 
   Widget listNew(Size size, List<CandidateOTD> list) => list.length > 0
       ? Swiper(
-          itemHeight: 200,
+          itemHeight: 180,
           itemWidth: size.width,
           layout: SwiperLayout.TINDER,
           itemBuilder: (BuildContext context, int index) {
@@ -218,47 +208,54 @@ class _HRListState extends State<HRList> {
                     const SizedBox(
                       height: paddingHor,
                     ),
-                    Text('Ứng viên mới: ${value.listCandidateChuaLH.length}',
-                        style: GoogleFonts.roboto(
-                            fontSize: fontTitle, fontWeight: FontWeight.w500)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                            'Ứng viên mới: ${value.listCandidateChuaLH.length}',
+                            style: GoogleFonts.roboto(
+                                fontSize: fontTitle,
+                                fontWeight: FontWeight.w500)),
+                        GestureDetector(
+                          onTap: () {
+                            _hrController.moveAddInfoPage();
+                          },
+                          child: value.listCandidateChuaLH.length > 0
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: paddingHor,
+                                      vertical: paddingVer),
+                                  decoration: BoxDecoration(
+                                    color: colorBackgroundMain.withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    'Liên hệ tất cả',
+                                    style: GoogleFonts.roboto(
+                                      fontSize: fontText,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ))
+                              : const SizedBox(),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ),
-              const SizedBox(
-                height: paddingVer,
               ),
               listNew(size, value.listCandidateChuaLH),
               const SizedBox(
                 height: paddingHor,
               ),
               Padding(
-                padding: const EdgeInsets.all(paddingHor),
+                padding: const EdgeInsets.symmetric(horizontal: paddingHor),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Lịch Sử',
                         style: GoogleFonts.roboto(
                             fontSize: fontTitle, fontWeight: FontWeight.w500)),
-                    GestureDetector(
-                      onTap: () {
-                        _hrController.moveAddInfoPage();
-                      },
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: paddingHor, vertical: paddingVer),
-                          decoration: BoxDecoration(
-                            color: colorBackgroundMain.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            'Liên hệ tất cả',
-                            style: GoogleFonts.roboto(
-                              fontSize: fontText,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          )),
-                    ),
                   ],
                 ),
               ),

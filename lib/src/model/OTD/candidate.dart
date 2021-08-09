@@ -62,3 +62,19 @@ class CandidateOTD {
         CandidateField.note: note,
       };
 }
+
+class CandidateUpdateOTD extends CandidateOTD {
+  bool isUpdate;
+
+  CandidateUpdateOTD(CandidateOTD data) {
+    name = data.name;
+    email = data.email;
+    phone = data.phone;
+    image = data.image;
+    facebook = data.facebook;
+    viTri = data.viTri;
+    soYeu = data.soYeu;
+    note = data.note;
+    isUpdate = false;
+  }
+}

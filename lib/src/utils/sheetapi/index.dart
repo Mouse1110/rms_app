@@ -19,10 +19,20 @@ class SheetAPI {
   static final _spreadsheetId = '1MAkr-ywoMv5AVTrxBEiDLM5oxIenOLRep3YFG3LiQQY';
   static final _gsheets = GSheets(_creadentials);
   static Worksheet _sheet;
+  static final sheetShow = '1MAkr-ywoMv5AVTrxBEiDLM5oxIenOLRep3YFG3LiQQY';
 
   static Future init(String title) async {
     try {
       final spreadsheet = await _gsheets.spreadsheet(_spreadsheetId);
+      _sheet = await _getWorkSheet(spreadsheet, title: title);
+    } catch (e) {
+      print('Fix :$e');
+    }
+  }
+
+  static Future initLog(String title, String spread) async {
+    try {
+      final spreadsheet = await _gsheets.spreadsheet(spread);
       _sheet = await _getWorkSheet(spreadsheet, title: title);
     } catch (e) {
       print('Fix :$e');

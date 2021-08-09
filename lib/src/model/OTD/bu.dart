@@ -8,6 +8,7 @@ class BUField {
   static String tinhTrang = 'Tình trạng';
   static String phoneList = 'Danh sách ứng viên';
   static String candidateLH = 'Ứng viên đã liên hệ';
+  static String candidateDN = 'Ứng viên được nhận';
   static String soLuocYeuCau = 'Sơ lược yêu cầu';
   static String dateTime = 'Datetime';
 
@@ -19,7 +20,7 @@ class BUField {
         tinhTrang,
         phoneList,
         soLuocYeuCau,
-        dateTime
+        dateTime,
       ];
 }
 
@@ -31,6 +32,7 @@ class BuOTD {
   String tinhTrang;
   List<dynamic> phoneList;
   List<dynamic> candidateLH;
+  List<dynamic> candidateDN;
   String soLuocYeuCau;
   String dateTime;
 
@@ -43,6 +45,7 @@ class BuOTD {
     this.tieuChi,
     this.tinhTrang,
     this.candidateLH,
+    this.candidateDN,
     this.viTri,
   });
 
@@ -54,6 +57,7 @@ class BuOTD {
         tinhTrang = jsonData[BUField.tinhTrang],
         phoneList = json.decode(jsonData[BUField.phoneList]),
         candidateLH = json.decode(jsonData[BUField.candidateLH]),
+        candidateDN = json.decode(jsonData[BUField.candidateDN]),
         soLuocYeuCau = jsonData[BUField.soLuocYeuCau],
         dateTime = jsonData[BUField.dateTime];
 
@@ -65,6 +69,7 @@ class BuOTD {
         BUField.tinhTrang: tinhTrang,
         BUField.phoneList: json.encode(phoneList),
         BUField.candidateLH: json.encode(candidateLH),
+        BUField.candidateDN: json.encode(candidateDN),
         BUField.soLuocYeuCau: soLuocYeuCau,
         BUField.dateTime: dateTime,
       };

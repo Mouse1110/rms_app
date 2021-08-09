@@ -3,6 +3,7 @@ import 'package:flutter_card_swipper/flutter_card_swiper.dart';
 import 'package:flutter_rms_app/src/controller/interview.dart';
 import 'package:flutter_rms_app/src/model/OTD/bu.dart';
 import 'package:flutter_rms_app/src/model/OTD/candidate.dart';
+import 'package:flutter_rms_app/src/model/OTD/interview.dart';
 import 'package:flutter_rms_app/src/model/global/page/interview.dart';
 import 'package:flutter_rms_app/src/utils/config/color.dart';
 import 'package:flutter_rms_app/src/utils/config/fontsize.dart';
@@ -11,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:provider/provider.dart';
 
+// VIEW ======================================
 class InterViewList extends StatefulWidget {
   const InterViewList({Key key}) : super(key: key);
 
@@ -21,83 +23,99 @@ class InterViewList extends StatefulWidget {
 class _InterViewListState extends State<InterViewList> {
   bool isShow = false;
   InterViewController _controller;
-
-  Widget itemCandidate(CandidateOTD data) => Column(
-        children: [
-          const SizedBox(
-            height: paddingVer,
-          ),
-          GestureDetector(
-            onTap: () {
-              print('aaa');
-            },
-            child: Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(radiuscard),
-                boxShadow: shadowCard,
-              ),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: paddingVer, vertical: paddingVer),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ClipOval(
-                    child: Image.network(
-                      data.image,
-                      fit: BoxFit.fill,
-                      width: 64,
-                      height: 64,
-                      errorBuilder: (context, url, error) =>
-                          const Icon(Icons.error),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            data.name,
-                            style: GoogleFonts.roboto(
-                                fontSize: fontText,
-                                fontWeight: FontWeight.w700),
-                          ),
-                          const SizedBox(
-                            width: paddingVer,
-                          ),
-                          Text(
-                            'Chưa cập nhật',
-                            style: GoogleFonts.roboto(
-                                color: Colors.redAccent,
-                                fontSize: 8,
-                                fontWeight: FontWeight.w300),
-                          )
-                        ],
+  //============================================
+  Widget itemCandidate(CandidateUpdateOTD data) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: paddingHor),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: paddingVer,
+            ),
+            GestureDetector(
+              onTap: () {
+                _controller.setCandidateIndex(data).then((value) {
+                  if (data.isUpdate) {
+                    _controller.moveDetailPage();
+                  } else {
+                    _controller.moveAddPage();
+                  }
+                });
+              },
+              child: Container(
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(radiuscard),
+                  boxShadow: shadowCard,
+                ),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: paddingVer, vertical: paddingVer),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ClipOval(
+                      child: Image.network(
+                        data.image,
+                        fit: BoxFit.fill,
+                        width: 64,
+                        height: 64,
+                        errorBuilder: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
-                      Text(
-                        data.viTri,
-                        style: GoogleFonts.roboto(
-                            fontSize: fontMini, fontWeight: FontWeight.w300),
-                      )
-                    ],
-                  ),
-                  Text(
-                    'Cập nhật >>',
-                    style: GoogleFonts.roboto(
-                        color: colorBackgroundMain,
-                        fontSize: fontMini,
-                        letterSpacing: 1.5,
-                        fontWeight: FontWeight.w300),
-                  )
-                ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data.name,
+                          style: GoogleFonts.roboto(
+                              fontSize: fontText, fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          data.viTri,
+                          style: GoogleFonts.roboto(
+                              fontSize: fontMini, fontWeight: FontWeight.w300),
+                        )
+                      ],
+                    ),
+                    Text(
+                      data.isUpdate ? 'Đã cập nhật' : 'Chưa cập nhật',
+                      style: GoogleFonts.roboto(
+                          color: data.isUpdate
+                              ? colorBackgroundMain
+                              : Colors.redAccent,
+                          fontSize: 8,
+                          fontWeight: FontWeight.w300),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
+
+  Widget listCandidate(List<CandidateUpdateOTD> list) => Column(
+      children: list.length > 0
+          ? [
+              Column(
+                children: list
+                    .map(
+                      (e) => itemCandidate(e),
+                    )
+                    .toList(),
+              ),
+              const SizedBox(
+                height: paddingHor * 2,
+              ),
+            ]
+          : [
+              Text('Hiện tại yêu cầu này chưa có ứng viên nào',
+                  style: GoogleFonts.roboto(
+                      fontSize: fontText, fontWeight: FontWeight.w300))
+            ]);
+
   //======================================
   Widget itemShowYeuCau() => GestureDetector(
         onTap: () {
@@ -169,9 +187,12 @@ class _InterViewListState extends State<InterViewList> {
         ),
       );
 
-  Widget itemYeuCau(BuOTD data) => GestureDetector(
+  Widget itemYeuCau(BuOTD data, int nonUpdate) => GestureDetector(
         onTap: () {
-          _controller.setListCandidateDaLH(data.candidateLH);
+          _controller.setListCandidateDaLH(data.candidateLH).then((value) => {
+                _controller.setListCandidateUpdate(data),
+                _controller.interViewModel.setBuIndex(data)
+              });
           setState(() {
             isShow = true;
           });
@@ -217,12 +238,17 @@ class _InterViewListState extends State<InterViewList> {
                 ],
               ),
               Text(
-                'Số ứng viên chưa liên hệ: ${data.phoneList.length - data.candidateLH.length}',
+                'Số ứng viên đã liên hệ: ${data.candidateLH.length}',
                 style: GoogleFonts.roboto(
                     fontSize: fontText, fontWeight: FontWeight.w500),
               ),
               Text(
-                'Số ứng viên đã liên hệ: ${data.candidateLH.length}',
+                'Số ứng viên chưa cập nhật: ${nonUpdate}',
+                style: GoogleFonts.roboto(
+                    fontSize: fontText, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                'Số ứng viên được nhận: ${data.candidateDN.length}',
                 style: GoogleFonts.roboto(
                     fontSize: fontText, fontWeight: FontWeight.w500),
               ),
@@ -241,27 +267,36 @@ class _InterViewListState extends State<InterViewList> {
         ),
       );
 
-  Widget chooseYeuCau(Size size, List<BuOTD> list) => list.length > 0
-      ? !isShow
-          ? Swiper(
-              itemHeight: 350,
-              itemWidth: size.width,
-              layout: SwiperLayout.TINDER,
-              itemBuilder: (BuildContext context, int index) {
-                return itemYeuCau(list[index]);
-              },
-              itemCount: list.length,
-              pagination:
-                  const SwiperPagination(margin: EdgeInsets.only(top: 360)),
-            )
-          : itemShowYeuCau()
-      : SizedBox(
-          height: 100,
-          child: Center(
-              child: Text('Hiện tại chưa có yêu cầu nào khả dụng',
-                  style: GoogleFonts.roboto(
-                      fontSize: fontText, fontWeight: FontWeight.w300))),
-        );
+  Widget chooseYeuCau(Size size, List<BuOTD> list, List<InterViewOTD> listInter,
+          int nonUpdate) =>
+      list.length > 0
+          ? !isShow
+              ? Swiper(
+                  itemHeight: 350,
+                  itemWidth: size.width,
+                  layout: SwiperLayout.TINDER,
+                  itemBuilder: (BuildContext context, int index) {
+                    return itemYeuCau(list[index], nonUpdate);
+                  },
+                  itemCount: list.length,
+                  pagination:
+                      const SwiperPagination(margin: EdgeInsets.only(top: 360)),
+                  onIndexChanged: (index) {
+                    _controller
+                        .countCandidateNonUpdate(
+                            list[index].candidateLH, listInter)
+                        .then((value) => _controller.interViewModel
+                            .setCountCandidateNonUpdate(value));
+                  },
+                )
+              : itemShowYeuCau()
+          : SizedBox(
+              height: 100,
+              child: Center(
+                  child: Text('Hiện tại chưa có yêu cầu nào khả dụng',
+                      style: GoogleFonts.roboto(
+                          fontSize: fontText, fontWeight: FontWeight.w300))),
+            );
 //======================================
   Widget scaffold(Size size, BuildContext context) =>
       Consumer<InterViewModel>(builder: (context, value, index) {
@@ -282,7 +317,12 @@ class _InterViewListState extends State<InterViewList> {
                   : const SizedBox(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: paddingHor),
-                child: chooseYeuCau(size, value.listBU),
+                child: chooseYeuCau(
+                  size,
+                  value.listBU,
+                  value.listInterView,
+                  value.countCandidateNonUpdate,
+                ),
               ),
               isShow
                   ? Column(
@@ -309,20 +349,7 @@ class _InterViewListState extends State<InterViewList> {
                         const SizedBox(
                           height: paddingHor,
                         ),
-                        Column(
-                            children: value.listCandidateDaLH.length > 0
-                                ? value.listCandidateDaLH
-                                    .map(
-                                      (e) => itemCandidate(e),
-                                    )
-                                    .toList()
-                                : [
-                                    Text(
-                                        'Hiện tại yêu cầu này chưa có ứng viên nào',
-                                        style: GoogleFonts.roboto(
-                                            fontSize: fontText,
-                                            fontWeight: FontWeight.w300))
-                                  ])
+                        listCandidate(value.listCandidateUpdate),
                       ],
                     )
                   : const SizedBox()
@@ -333,7 +360,6 @@ class _InterViewListState extends State<InterViewList> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller = InterViewController(context: context);
   }

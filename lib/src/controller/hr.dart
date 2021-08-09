@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_rms_app/src/model/OTD/bu.dart';
 import 'package:flutter_rms_app/src/model/OTD/candidate.dart';
+import 'package:flutter_rms_app/src/model/OTD/interview.dart';
 import 'package:flutter_rms_app/src/model/global/index.dart';
 import 'package:flutter_rms_app/src/model/global/page/hr.dart';
 import 'package:flutter_rms_app/src/utils/sheetapi/index.dart';
@@ -43,9 +44,58 @@ class HRController {
         SheetAPI.update(data.toJson(), data.id).then((value) => getData()));
   }
 
-  Future postCandidateDaLH(String phone) async {
+  //===========================================
+  Future<int> getID(dynamic value) async {
+    if (value == null) return 0;
+    int index = int.parse(value['id']);
+    return index;
+  }
+
+  Future postInterView(int id, String date, String info) async {
+    List<CandidateOTD> data = hrModel.listCandidateChuaLH;
+    List<Map<String, dynamic>> interView = [];
+    data.forEach((element) {
+      InterViewOTD json = InterViewOTD();
+      json.id = '${++id}';
+      json.idBU = hrModel.buIndex.id;
+      json.date = date;
+      json.thongTin = info;
+      json.phone = element.phone;
+      interView.add(json.toJson());
+    });
+    SheetAPI.init('InterView').then((value) => SheetAPI.insert(interView));
+  }
+
+  //===========================================
+  Future postRemoveCandidateChuaLH(String phone) async {
     BuOTD data = hrModel.buIndex;
-    data.candidateLH.add(phone);
+    int index = hrModel.listCandidateChuaLH
+        .indexWhere((element) => element.phone == phone);
+    if (index > -1) {
+      hrModel.listCandidateChuaLH.removeAt(index);
+    }
+    int find = data.phoneList.indexWhere((element) => element == phone);
+    if (find > -1) {
+      data.phoneList.removeAt(find);
+    }
+    SheetAPI.init('BU').then((value) => SheetAPI.update(data.toJson(), data.id)
+        .then((value) => setListCandidateDaLH()));
+  }
+
+  Future<List<String>> parseListPhone() async {
+    List<String> lPhone = [];
+    hrModel.listCandidateChuaLH.forEach((element) {
+      lPhone.add(element.phone);
+    });
+    return lPhone;
+  }
+
+  Future postCandidateDaLH(List<String> phone) async {
+    BuOTD data = hrModel.buIndex;
+    phone.forEach((phoneItem) {
+      data.candidateLH.add(phoneItem);
+      hrModel.setListcandidateChuaLH([]);
+    });
     SheetAPI.init('BU').then((value) => SheetAPI.update(data.toJson(), data.id)
         .then((value) => setListCandidateDaLH()));
   }

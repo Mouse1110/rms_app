@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rms_app/src/model/global/index.dart';
+import 'package:flutter_rms_app/src/model/global/page/account.dart';
 import 'package:flutter_rms_app/src/model/global/page/bu.dart';
 import 'package:flutter_rms_app/src/model/global/page/hr.dart';
 import 'package:flutter_rms_app/src/model/global/page/interview.dart';
@@ -61,6 +62,7 @@ class HomeScreen extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => MarketingModel()),
             ChangeNotifierProvider(create: (_) => HRModel()),
             ChangeNotifierProvider(create: (_) => InterViewModel()),
+            ChangeNotifierProvider(create: (_) => AccountModel()),
           ],
           child: Consumer<IndexModel>(
             builder: (context, value, child) {

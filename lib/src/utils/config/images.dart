@@ -8,3 +8,4 @@ const String iconFace = 'assets/icons/icon_face.png';
 const String iconGmail = 'assets/icons/icon_gmail.png';
 const String iconCallLH = 'assets/icons/telephone.png';
 const String iconFacebookLH = 'assets/icons/telephone.png';
+const String iconUser = 'assets/icons/user.png';

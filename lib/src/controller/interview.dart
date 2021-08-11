@@ -20,9 +20,14 @@ class InterViewController {
   }
 
   Future getData() async {
-    SheetAPI.init('BU').then((value) =>
-        SheetAPI.getAllRow().then((value) => setListBU(value).then((value) => {
-              interViewModel.setListBU(value),
+    interViewModel.setBuIndex(null);
+    interViewModel.setListCandidateUpdate([]);
+    SheetAPI.init('BU').then((value) => SheetAPI.getAllRow().then((value) =>
+        setListBU(value).then((value) {
+          print(value.length);
+          if (value.length > 0) {
+            {
+              interViewModel.setListBU(value);
               SheetAPI.init('InterView').then((value) => SheetAPI.getAllRow()
                   .then((value) => setListInterView(value).then((value) => {
                         interViewModel.setListInterView(value),
@@ -43,8 +48,15 @@ class InterViewController {
                                       indexModel.setInitType(2),
                                       Navigator.pop(context),
                                     }))),
-                      })))
-            })));
+                      })));
+            }
+          } else {
+            indexModel.setTitle('Phỏng vấn tuyển dụng');
+            indexModel.setInitPage(4);
+            indexModel.setInitType(2);
+            Navigator.pop(context);
+          }
+        })));
   }
 
   Future<List<CandidateOTD>> setListCandidate(dynamic value) async {
@@ -158,6 +170,9 @@ class InterViewController {
                   SheetAPI.init('File').then((value) =>
                       SheetAPI.insert([file.toJson()]).then((value) =>
                           {moveDetailPage(), Navigator.pop(context)}));
+                } else {
+                  moveDetailPage();
+                  Navigator.pop(context);
                 }
               })));
     }

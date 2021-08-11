@@ -20,4 +20,8 @@ class URLLauncher {
     );
     await _launchURL('$url');
   }
+
+  static Future openCall({@required String phone}) async {
+    await _launchURL('tel://$phone');
+  }
 }

@@ -17,6 +17,7 @@ import 'package:flutter_rms_app/src/view/splash/index.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class HomeView extends StatefulWidget {
   const HomeView({Key key}) : super(key: key);
@@ -116,26 +117,27 @@ class _HomeViewState extends State<HomeView> {
                       initType == 0
                           ? Consumer<AccountModel>(
                               builder: (context, value, child) {
-                              return GestureDetector(
-                                onTap: () {
-                                  indexModel.setInitPage(5);
-                                  indexModel.setInitType(3);
-                                },
-                                child: ClipOval(
-                                  child: Image.network(
-                                    '${value.user.photoUrl}',
-                                    fit: BoxFit.fill,
-                                    width: 32,
-                                    height: 32,
-                                    errorBuilder: (context, url, error) =>
-                                        Image.asset(
-                                      iconUser,
-                                      width: 32,
-                                      height: 32,
-                                    ),
-                                  ),
-                                ),
-                              );
+                              return !kIsWeb
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        indexModel.setInitPage(5);
+                                        indexModel.setInitType(3);
+                                      },
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          '${value.user.photoUrl}',
+                                          fit: BoxFit.fill,
+                                          width: 32,
+                                          height: 32,
+                                          errorBuilder: (context, url, error) =>
+                                              Image.asset(
+                                            iconUser,
+                                            width: 32,
+                                            height: 32,
+                                          ),
+                                        ),
+                                      ))
+                                  : const SizedBox();
                             })
                           : Consumer<IndexModel>(
                               builder: (context, value, child) => Text(

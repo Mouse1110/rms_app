@@ -20,20 +20,27 @@ class HRController {
 
   Future getData() async {
     SheetAPI.init('BU').then((value) =>
-        SheetAPI.getAllRow().then((value) => setListBU(value).then((value) => {
-              hrModel.setListBU(value),
-              SheetAPI.init('Candidate').then((value) => SheetAPI.getAllRow()
-                  .then((value) => setListCandidate(value).then((value) => {
-                        hrModel.setListCandidate(value),
-                        setIndexBU(hrModel.listBU[0]),
-                        setListCandidateNew(value, hrModel.listBU).then(
-                            (value) => hrModel.setListCandidateNew(value)),
-                        //================================
-                        indexModel.setTitle('Thông tin ứng viên'),
-                        indexModel.setInitPage(3),
-                        indexModel.setInitType(3),
-                        Navigator.pop(context),
-                      })))
+        SheetAPI.getAllRow().then((value) => setListBU(value).then((value) {
+              if (value.length > 0) {
+                hrModel.setListBU(value);
+                SheetAPI.init('Candidate').then((value) => SheetAPI.getAllRow()
+                    .then((value) => setListCandidate(value).then((value) => {
+                          hrModel.setListCandidate(value),
+                          setIndexBU(hrModel.listBU[0]),
+                          setListCandidateNew(value, hrModel.listBU).then(
+                              (value) => hrModel.setListCandidateNew(value)),
+                          //================================
+                          indexModel.setTitle('Thông tin ứng viên'),
+                          indexModel.setInitPage(3),
+                          indexModel.setInitType(3),
+                          Navigator.pop(context),
+                        })));
+              } else {
+                indexModel.setTitle('Thông tin ứng viên');
+                indexModel.setInitPage(3);
+                indexModel.setInitType(3);
+                Navigator.pop(context);
+              }
             })));
   }
 

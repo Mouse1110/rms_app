@@ -52,7 +52,7 @@ class _HRAddInfState extends State<HRAddInf> {
                 ),
                 const SizedBox(height: paddingHor),
                 TextInput(
-                  label: 'Thông tin Phỏng vấn',
+                  label: 'Thông tin Phỏng vấn (Hiển thị trên Nội dung Email)',
                   controller: thongTin,
                 ),
                 const SizedBox(height: paddingHor),

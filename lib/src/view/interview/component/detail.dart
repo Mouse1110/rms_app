@@ -159,11 +159,16 @@ class InterViewDetail extends StatelessWidget {
                   const SizedBox(
                     width: paddingHor,
                   ),
-                  ClipOval(
-                    child: Image.asset(
-                      iconCallLH,
-                      width: 24,
-                      height: 24,
+                  GestureDetector(
+                    onTap: () {
+                      URLLauncher.openCall(phone: candidate.phone);
+                    },
+                    child: ClipOval(
+                      child: Image.asset(
+                        iconCallLH,
+                        width: 24,
+                        height: 24,
+                      ),
                     ),
                   ),
                   const SizedBox(

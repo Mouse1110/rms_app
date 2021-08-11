@@ -8,6 +8,7 @@ import 'package:flutter_rms_app/src/model/global/page/interview.dart';
 import 'package:flutter_rms_app/src/utils/config/color.dart';
 import 'package:flutter_rms_app/src/utils/config/fontsize.dart';
 import 'package:flutter_rms_app/src/utils/config/shadow.dart';
+import 'package:flutter_rms_app/src/utils/sheetapi/index.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:provider/provider.dart';
@@ -117,7 +118,7 @@ class _InterViewListState extends State<InterViewList> {
             ]);
 
   //======================================
-  Widget itemShowYeuCau() => GestureDetector(
+  Widget itemShowYeuCau(BuOTD data) => GestureDetector(
         onTap: () {
           setState(() {
             isShow = false;
@@ -140,7 +141,7 @@ class _InterViewListState extends State<InterViewList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Tuyển Dev phát triển app di động và vận hành hệ thống',
+                    data.soLuocYeuCau,
                     style: GoogleFonts.roboto(
                         color: colorBackgroundMain,
                         fontSize: fontTitle,
@@ -151,7 +152,7 @@ class _InterViewListState extends State<InterViewList> {
                     height: paddingHor,
                   ),
                   Text(
-                    'Đào tạo/Chuyên viên học vụ',
+                    '${data.phongBan}/${data.viTri}',
                     style: GoogleFonts.roboto(
                         fontSize: fontMini, fontWeight: FontWeight.w300),
                   ),
@@ -168,7 +169,7 @@ class _InterViewListState extends State<InterViewList> {
                         fontWeight: FontWeight.w300),
                   ),
                   LiteRollingSwitch(
-                    value: true,
+                    value: data.tinhTrang == 'in' ? true : false,
                     textOff: 'Ngừng hoạt động',
                     textOn: 'Đang hoạt động',
                     textSize: 8,
@@ -177,7 +178,9 @@ class _InterViewListState extends State<InterViewList> {
                     colorOn: colorBackgroundMain,
                     colorOff: Colors.redAccent,
                     onChanged: (bool value) {
-                      print(value);
+                      data.tinhTrang = value ? 'in' : 'out';
+                      SheetAPI.init('BU').then(
+                          (value) => SheetAPI.update(data.toJson(), data.id));
                     },
                   )
                 ],
@@ -268,7 +271,7 @@ class _InterViewListState extends State<InterViewList> {
       );
 
   Widget chooseYeuCau(Size size, List<BuOTD> list, List<InterViewOTD> listInter,
-          int nonUpdate) =>
+          int nonUpdate, BuOTD buIndex) =>
       list.length > 0
           ? !isShow
               ? Swiper(
@@ -289,7 +292,7 @@ class _InterViewListState extends State<InterViewList> {
                             .setCountCandidateNonUpdate(value));
                   },
                 )
-              : itemShowYeuCau()
+              : itemShowYeuCau(buIndex)
           : SizedBox(
               height: 100,
               child: Center(
@@ -317,12 +320,8 @@ class _InterViewListState extends State<InterViewList> {
                   : const SizedBox(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: paddingHor),
-                child: chooseYeuCau(
-                  size,
-                  value.listBU,
-                  value.listInterView,
-                  value.countCandidateNonUpdate,
-                ),
+                child: chooseYeuCau(size, value.listBU, value.listInterView,
+                    value.countCandidateNonUpdate, value.buIndex),
               ),
               isShow
                   ? Column(
@@ -338,7 +337,7 @@ class _InterViewListState extends State<InterViewList> {
                                   style: GoogleFonts.roboto(
                                       fontSize: fontTitle,
                                       fontWeight: FontWeight.w500)),
-                              Text('10',
+                              Text('${value.listCandidateDaLH.length}',
                                   style: GoogleFonts.roboto(
                                       fontSize: fontTitle,
                                       color: Colors.redAccent,

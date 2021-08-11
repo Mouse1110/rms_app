@@ -74,7 +74,14 @@ class _UserPageState extends State<UserPage> {
         child: Column(
           children: [
             Row(
-              children: [Icon(Icons.arrow_back)],
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      _controller.indexModel.setInitPage(0);
+                      _controller.indexModel.setInitType(0);
+                    },
+                    child: Icon(Icons.arrow_back))
+              ],
             ),
             const SizedBox(
               height: paddingHor,
